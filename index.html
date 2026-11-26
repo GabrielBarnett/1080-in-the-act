@@ -199,7 +199,7 @@ footer{font-size:12.5px;color:var(--ink-2);border-top:1px solid var(--line);padd
           <label class="chk"><input type="checkbox" id="lay-inactive" checked><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="4" class="st-i"/></svg>Inactive station</label>
           <label class="chk"><input type="checkbox" id="lay-ej" checked><svg width="14" height="14" aria-hidden="true"><path d="M7 1.5 12.5 7 7 12.5 1.5 7Z" class="ej"/></svg>Ejector (removed Jan 2026)</label>
           <label class="chk"><input type="checkbox" id="lay-cap"><svg width="14" height="14" aria-hidden="true"><path d="M7 2 12.5 12H1.5Z" class="cap"/></svg>Wild dog trapped or shot</label>
-          <div class="seg" id="basesel" role="group" aria-label="Base map"><span class="lab">Base map</span><span class="grp"><button class="btn" type="button" data-base="street" aria-pressed="false">Street</button><button class="btn" type="button" data-base="topo" aria-pressed="false">Topographic</button><button class="btn" type="button" data-base="none" aria-pressed="false">None</button></span></div>
+          <div class="seg" id="basesel" role="group" aria-label="Base map"><span class="lab">Base map</span><span class="grp"><button class="btn" type="button" data-base="street" aria-pressed="false">Street</button><button class="btn" type="button" data-base="topo" aria-pressed="false">Topographic</button></span></div>
         </div>
         <p class="basemsg" id="basemsg" role="status" hidden></p>
         <div class="mapwrap" id="mapwrap">
@@ -364,7 +364,6 @@ function probe(P){ return new Promise(res=>{
 }); }
 async function setBase(mode,auto){
   const seq=++base.seq; baseMsg.hidden=true;
-  if(mode==='none'){ applyBase('none',null,'chosen'); return; }
   if(mode==='street'&&FILE&&!auto){ baseMsg.textContent='The OpenStreetMap street layer only loads once this page is on a web address. Use Topographic until then.'; baseMsg.hidden=false; return; }
   const order=auto?(FILE?CHAIN.topo:CHAIN.street.concat(CHAIN.topo)):CHAIN[mode];
   for(const id of order){ const ok=await probe(PROV[id]); if(seq!==base.seq) return; if(ok){ applyBase(id==='topo'?'topo':'street',PROV[id],''); return; } }
@@ -380,7 +379,6 @@ function applyBase(mode,P,why){
   let note;
   if(P){ note='Stations are plotted from the released coordinates. Drag to move. Ctrl + scroll, pinch or double-click to zoom.'; if(FILE) note+=' This copy was opened from a file, so it shows the topographic layer. The OpenStreetMap street layer loads once the page is on a web address.'; }
   else if(why==='failed') note='The base map could not load in this view, because the viewer blocks outside map tiles or there is no connection. The stations are shown on a plain latitude and longitude grid instead, and the four place markers are approximate.';
-  else if(why==='chosen') note='No base map. The stations are shown on a plain latitude and longitude grid, and the four place markers are approximate.';
   else note='Stations are plotted from the released coordinates.';
   noteEl.textContent=note;
   svg.setAttribute('aria-label',(P?'Map':'Plot')+' of '+T.withCoords+' bait station locations'+(P?'':' by latitude and longitude')+'. The table view below lists every station.');
